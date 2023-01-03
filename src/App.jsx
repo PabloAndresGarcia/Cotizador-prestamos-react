@@ -1,11 +1,23 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Header from "./components/Header"
 import Button from "./components/Button"
-import {formatearDinero} from "./helpers/index.js"
+import {formatearDinero, calcularTotalPagar} from "./helpers/index.js"
 
 
 function App() {
-  const [cantidad, setCantidad] = useState(10000);  
+  const [cantidad, setCantidad] = useState(10000);
+  const [meses, setMeses] = useState(6);
+  const [total, setTotal] = useState(0);
+  const [pago, setPago] = useState(0);
+
+  useEffect(()=>{
+    const resultadoTotalPagar = calcularTotalPagar(cantidad, meses);
+    setTotal(resultadoTotalPagar);
+  }, [cantidad, meses]);
+
+  useEffect(()=>{
+setPago (total / meses);
+}, [total]);
 
   const MIN = 0;
   const MAX = 20000;
@@ -63,6 +75,37 @@ function App() {
        />
 
        <p className='text-center my-10 text-5xl font-extrabold text-indigo-600'>{formatearDinero(cantidad)}</p>
+
+
+      <h2 className='text-2xl font-extrabold text-gray-500 text-center'>
+          Elige un <span className='text-indigo-600'>Plazo</span> a pagar
+      </h2>
+    
+      <select
+      value={meses}
+      onChange={e=> setMeses(+e.target.value)}
+      className='mt-5 w-full p-2 bg-white border border-gray-300 rounded-lg text-center text-xl font-bold text-gray-500'
+      >
+        <option value="6">6 meses</option>
+        <option value="12">6 meses</option>
+        <option value="24">24 meses</option>
+      </select>
+
+    <div className='my-5 space-y-3 bg-gray-50 p-5'>
+    <h2 className='text-2xl font-extrabold text-gray-500 text-center'>
+          Resumen <span className='text-indigo-600'>de pagos</span>
+      </h2>
+
+      <p className='text-xl text-gray-500 text-center font-bold'>{meses} Meses</p>
+      <p className='text-xl text-gray-500 text-center font-bold'> {formatearDinero(total)} Total a pagar</p>
+      <p className='text-xl text-gray-500 text-center font-bold'>{formatearDinero(pago)} Mensuales </p>
+
+    
+
+    </div>
+
+
+
     </div>
   )
 }
